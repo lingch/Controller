@@ -393,6 +393,11 @@
               <FileType>1</FileType>
               <FilePath>.\timerTask.c</FilePath>
             </File>
+            <File>
+              <FileName>debug.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\debug.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

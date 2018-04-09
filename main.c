@@ -1,33 +1,10 @@
-/*---------------------------------------------------------------------*/
-/* --- STC MCU International Limited ----------------------------------*/
-/* --- STC 1T Series MCU Demo Programme -------------------------------*/
-/* --- Mobile: (86)13922805190 ----------------------------------------*/
-/* --- Fax: 86-0513-55012956,55012947,55012969 ------------------------*/
-/* --- Tel: 86-0513-55012928,55012929,55012966 ------------------------*/
-/* --- Web: www.GXWMCU.com --------------------------------------------*/
-/* --- QQ:  800003751 -------------------------------------------------*/
-/* 如果要在程序中使用此代码,请在程序中注明使用了宏晶科技的资料及程序   */
-/*---------------------------------------------------------------------*/
-
-
-/*************	本程序功能说明	**************
-
-用STC的MCU的IO方式控制74HC595驱动8位数码管。
-
-用户可以修改宏来选择时钟频率.
-
-显示效果为: 左边为INT0(SW17)中断计数, 右边为INT1(SW18)中断计数, 计数范围为0~255.
-
-由于按键是机械按键, 按下有抖动, 而本例程没有去抖动处理, 所以按一次有多个计数也是正常的.
-
-******************************************/
-
 #define MAIN_Fosc		11059200L	//定义主时钟
 
 #include	"STC15Fxxxx.H"
 #include "uart.h"
 #include "timer.h"
 #include "delay.h"
+#include "debug.h"
 
 #include <stdio.h>
 
@@ -75,6 +52,12 @@ void main(void)
 {
 	int i;
 	
+	UartInit();
+	Timer1_init();
+	//Timer2_init();
+	
+	debugStr("Uart initialization OK");
+	
 	EA = 1;		//允许总中断
 	IE0  = 0;	//外中断0标志位
 	EX0 = 1;	//INT0 Enable
@@ -101,16 +84,19 @@ void main(void)
 
 	working = 0;
 	
+	debugStr("start working");
+	
 	while(1){
 
 		P55 = ~P55;
 
-		if(!key1.pressed)
-
-		delay_ms(100);
-
 		if(!working){
+			debugStr("going to sleep");
 			PCON |= 0x02;	//Sleep
+			_nop_();
+			_nop_();
+			_nop_();
+			debugStr("awake from sleep");
 		}
 	}
 	
@@ -119,6 +105,8 @@ void main(void)
 /********************* INT0中断函数 *************************/
 void INT0_int (void) interrupt INT0_VECTOR		//进中断时已经清除标志
 {
+	debugStr("detected key press");
+	
 	working = 1;
 
 	if(key1.pressed){
@@ -158,6 +146,9 @@ void rotateState(){
 
 void detectKeyRelease(){
 	if(key1.pressed ==1 && Key1 == KEY_RELEASED){
+		
+		debugStr("detected key release");
+		
 		//detected release
 		key1.pressed = 0;
 
