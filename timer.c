@@ -24,10 +24,13 @@ TimerResolution tGetNow(Timer *timer)
 }
 
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
+	Node *node;
 	TimerTask *task = createTimerTask(sec,msec,callback);
+	debugStr("task created");
 	task->lastRun = tGetNow(timer);
-
-	timer->pTaskHead = addNode(timer->pTaskHead, task);
+	node = addNode(timer->pTaskHead, task);
+	debug("new added node=%08x\n",node);
+	timer->pTaskHead = node;
 	debugStr("task added");
 
 	return task;
@@ -44,14 +47,13 @@ void delTimerTask(Timer *timer, TimerTask *pTask){
 
 void	Timer1_init(void)
 {
+	tInit(&timer1, MAIN_Fosc / 1000);
+
 	if (timer1.timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
 		//TODO: error "Timer1设置的中断过快!"
 	}
 	else if ((timer1.timerReload/12) < 65536UL){	// 如果用户设置值不合适， 则不启动定时器
-		debugStr("Timer1_init");
-		
-		tInit(&timer1, MAIN_Fosc / 1000);
-		
+
 		TR1 = 0;	//停止计数
 		ET1 = 1;	//允许中断
 	//	PT1 = 1;	//高优先级中断
@@ -74,6 +76,8 @@ void	Timer1_init(void)
 	// 	}
 
 		TR1 = 1;	//开始运行
+
+		debugStr("timer1 initialization OK");
 	}
 	else{
 		//TODO: error "Timer1设置的中断过慢!"
@@ -89,28 +93,34 @@ void processTasks(Timer *timer){
 	Node *pNode;
 	TimerTask *pTask;
 	TimerResolution delta;
+	
+	int taskCount = 0;
 
 	timer->tNow = tIncrease(timer->tNow);
-	
+	debug("tNow updated(%d,%d)\n",timer->tNow.sec,timer->tNow.msec);
 	//TODO: will this _interrupt function re-entrance?
 	pNode = timer->pTaskHead;
 	while(pNode){
+		taskCount++;
+
 		pTask = (TimerTask*)pNode->pData;
 		delta = tSub(timer1.tNow,pTask->lastRun);
 		if(tCmp(delta,pTask->interval)){
 			//time to run
+			debugStr("run timer callback");
 			pTask->proc();
 		}
 
-		pNode = (Node*)pNode->next;
-	}
+		pNode = pNode->next;
+	} 
+	debug("loop through %d tasks\n", taskCount);
 }
 
 void timer1_int (void) interrupt TIMER1_VECTOR
 {
-	debugStr("timer1 int enter");
+	//debugStr("timer1 int enter");
 	processTasks(&timer1);
-	debugStr("timer1 int exit");
+	//debugStr("timer1 int exit");
 }
 
 void timer2_int (void) interrupt TIMER2_VECTOR

@@ -1,11 +1,15 @@
 #include "list.h"
 #include <stdlib.h>
+#include "debug.h"
 
 Node* addNode(Node *head, void *pData){
-	Node *newNode = (Node*)malloc(sizeof(Node)/sizeof(u8));
+	Node *newNode;
+
+	newNode = (Node*)malloc(sizeof(Node)/sizeof(u8));
 	newNode->pData = pData;
 	
 	if(head == NULL){
+		debugStr("empty list");
 		newNode->prev = newNode->next = NULL;
 	}else{
 		newNode->next = head;

@@ -1,4 +1,4 @@
-#define MAIN_Fosc		11059200L	//¶¨ÒåÖ÷Ê±ÖÓ
+#define MAIN_Fosc		11059200L	//å®šä¹‰ä¸»æ—¶é’Ÿ
 
 #include	"STC15Fxxxx.H"
 #include "uart.h"
@@ -12,11 +12,11 @@
 #define DIS_BLACK	0x10
 #define DIS_		0x11
 
-/****************************** ÓÃ»§¶¨Òåºê ***********************************/
+/****************************** ç”¨æˆ·å®šä¹‰å® ***********************************/
 
-#define		Timer0_Reload	(65536UL -(MAIN_Fosc / 1000))		//Timer 0 ÖĞ¶ÏÆµÂÊ, 1000´Î/Ãë
+#define		Timer0_Reload	(65536UL -(MAIN_Fosc / 1000))		//Timer 0 ä¸­æ–­é¢‘ç‡, 1000æ¬¡/ç§’
 
-/********************** Ö÷º¯Êı ************************/
+/********************** ä¸»å‡½æ•° ************************/
 
 enum EState {Hold1=0, Hold2, Hold3};
 
@@ -42,85 +42,13 @@ typedef struct
 KeyPress key1;
 TimerTask* taskRotateState = NULL;
 TimerTask* taskDetectKeyRelease = NULL;
+TimerTask* taskRunningLight = NULL;
 
 void detectKeyRelease();
 void rotateState();
 
-u8 working = 1;
+u8 working;
 
-void main(void)
-{
-	int i;
-	
-	UartInit();
-	Timer1_init();
-	//Timer2_init();
-	
-	debugStr("Uart initialization OK");
-	
-	EA = 1;		//ÔÊĞí×ÜÖĞ¶Ï
-	IE0  = 0;	//ÍâÖĞ¶Ï0±êÖ¾Î»
-	EX0 = 1;	//INT0 Enable
-	IT0 = 1; //down edge trigger
-	
-	state = Hold1;
-	
-	P0M1 = 0;	P0M0 = 1;	//ÉèÖÃÍÆÍìÄ£Ê½
-	P1M1 = 0;	P1M1 = 0;	//ÉèÖÃÎª×¼Ë«Ïò¿Ú
-	P5M1 = 0;	P5M0 = 0;	//ÉèÖÃÎª×¼Ë«Ïò¿Ú
-	P0=0x01;
-	P1=0xff;
-	
-	for(i=0;i<10;i++){
-		P55 = ~P55;
-		delay_ms(100);
-	}
-	
-	//PCON |= 0x02;	//Sleep
-	
-	//wake up here
-	//	delay_ms(1);
-	//P10 = 1;
-
-	working = 0;
-	
-	debugStr("start working");
-	
-	while(1){
-
-		P55 = ~P55;
-
-		if(!working){
-			debugStr("going to sleep");
-			PCON |= 0x02;	//Sleep
-			_nop_();
-			_nop_();
-			_nop_();
-			debugStr("awake from sleep");
-		}
-	}
-	
-}
-
-/********************* INT0ÖĞ¶Ïº¯Êı *************************/
-void INT0_int (void) interrupt INT0_VECTOR		//½øÖĞ¶ÏÊ±ÒÑ¾­Çå³ı±êÖ¾
-{
-	debugStr("detected key press");
-	
-	working = 1;
-
-	if(key1.pressed){
-		return;	//already pressed? should not be possible
-		//TODO: add a debug warning
-	}
-
-	key1.pressed = 1;
-	key1.tPress = timer1GetNow();
-
-	taskDetectKeyRelease = addTimerTask(&timer1,detectKeyRelease,0,10);
-	taskRotateState = addTimerTask(&timer1, rotateState, 3,0);
-
-}
 
 void rotateState(){
 	state = (state + 1) % 3;	//shift state
@@ -157,3 +85,72 @@ void detectKeyRelease(){
 	}
 }
 
+void flashRunningLight(){
+	P55 = ~P55;
+}
+
+
+void mainInit(){
+	key1.pressed = 0;
+	working = 0;
+
+	EA = 1;		//å…è®¸æ€»ä¸­æ–­
+	IE0  = 0;	//å¤–ä¸­æ–­0æ ‡å¿—ä½
+	EX0 = 1;	//INT0 Enable
+	IT0 = 1; //down edge trigger
+	
+	state = Hold1;
+	
+	P0M1 = 0;	P0M0 = 1;	//è®¾ç½®æ¨æŒ½æ¨¡å¼
+	P1M1 = 0;	P1M1 = 0;	//è®¾ç½®ä¸ºå‡†åŒå‘å£
+	P5M1 = 0;	P5M0 = 0;	//è®¾ç½®ä¸ºå‡†åŒå‘å£
+	P0=0x01;
+	P1=0xff;
+
+	debugStr("main process initialization OK");
+}
+
+void main(void)
+{
+	UartInit();
+	Timer1_init();
+	//Timer2_init();
+	mainInit();
+
+	debugStr("all initialization done, main process started");
+	
+	taskRunningLight = addTimerTask(&timer1,flashRunningLight,0,100);
+working=1;
+	while(1){
+		if(!working){
+			debugStr("going to sleep");
+			PCON |= 0x02;	//Sleep
+			_nop_();
+			_nop_();
+			_nop_();
+			debugStr("awake from sleep");
+		}
+	}
+	
+}
+
+/********************* INT0ä¸­æ–­å‡½æ•° *************************/
+void INT0_int (void) interrupt INT0_VECTOR		//è¿›ä¸­æ–­æ—¶å·²ç»æ¸…é™¤æ ‡å¿—
+{
+	debugStr("detected key press");
+	
+	working = 1;
+
+	if(key1.pressed){
+		debugStr("key already pressed");
+		return;	//already pressed? should not be possible
+		//TODO: add a debug warning
+	}
+
+	key1.pressed = 1;
+	key1.tPress = tGetNow(&timer1);
+
+	taskDetectKeyRelease = addTimerTask(&timer1,detectKeyRelease,0,10);
+	taskRotateState = addTimerTask(&timer1, rotateState, 3,0);
+
+}

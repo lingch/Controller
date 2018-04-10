@@ -19,7 +19,7 @@ extern Timer timer1;
 extern Timer timer2;
 
 void	Timer1_init(void);
-TimerResolution timer1GetNow();
+TimerResolution tGetNow(Timer *timer);
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec);
 void delTimerTask(Timer *timer, TimerTask *p);
 

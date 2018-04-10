@@ -1,5 +1,5 @@
 #include "uart.h"
-
+#include "debug.h"
 
 void UartInit(void)		//9600bps@11.0592MHz
 {
@@ -13,6 +13,8 @@ void UartInit(void)		//9600bps@11.0592MHz
 	TH1 = 0xDC;		//设定定时器重装值
 	ET1 = 0;		//禁止定时器1中断
 	TR1 = 1;		//启动定时器1
+
+	debugStr("uart initialization OK");
 }
 
 /*----------------------------
