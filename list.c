@@ -1,8 +1,10 @@
+#include "list.h"
+#include <stdlib.h>
 
-
-Node* addNode(Node *head, void *data){
+Node* addNode(Node *head, void *pData){
 	Node *newNode = (Node*)malloc(sizeof(Node)/sizeof(u8));
-
+	newNode->pData = pData;
+	
 	if(head == NULL){
 		newNode->prev = newNode->next = NULL;
 	}else{
@@ -14,31 +16,24 @@ Node* addNode(Node *head, void *data){
 	return newNode;
 }
 
-Node* deleteNode(Node *head, void *data){
+Node* deleteNode(Node *head, void *pData){
 	
 	Node *p = head;
 
 	while(p){
-		
+		if(p->pData == pData){
+			//target node found
+			if(head == p){
+				head = NULL;
+			}else{
+				p->prev->next = p->next;
+				if(p->next){
+					p->next->prev = p->prev;
+				}
+			}
+			free(p);
+			return head;
+		}
+		p=p->next;
 	}
-
-	//head is the only element in this list
-	if(head->prev == head->next == NULL){
-		head = NULL;
-	}
-
-	if(p->prev){
-		//p is not the head
-		((TimerTask*)(p->prev))->next = p->next;
-	}else{
-		//p is the head
-		*ppTaskHead = p->next;
-	}
-
-	if(p->next){
-		//p is not the tail
-		((TimerTask*)(p->next))->prev=p->prev;
-	}
-
-	free(p);
 }

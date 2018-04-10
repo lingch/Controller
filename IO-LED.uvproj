@@ -398,6 +398,11 @@
               <FileType>1</FileType>
               <FilePath>.\debug.c</FilePath>
             </File>
+            <File>
+              <FileName>list.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\list.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -422,6 +427,16 @@
               <FileName>uart.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>list.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\list.h</FilePath>
+            </File>
+            <File>
+              <FileName>debug.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\debug.h</FilePath>
             </File>
           </Files>
         </Group>

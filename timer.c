@@ -18,24 +18,41 @@ void tInit(Timer *timer, u16 reloadCount){
 	timer->timerReload = reloadCount;
 }
 
-TimerResolution timer1GetNow()
+TimerResolution tGetNow(Timer *timer)
 {
-	return timer1.tNow;
+	return timer->tNow;
 }
+
+TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
+	TimerTask *task = createTimerTask(sec,msec,callback);
+	task->lastRun = tGetNow(timer);
+
+	timer->pTaskHead = addNode(timer->pTaskHead, task);
+	debugStr("task added");
+
+	return task;
+}
+
+void delTimerTask(Timer *timer, TimerTask *pTask){
+
+	timer->pTaskHead = deleteNode(timer->pTaskHead,pTask);
+
+	freeTimerTask(pTask);
+	debugStr("task free");
+}
+
 
 void	Timer1_init(void)
 {
-
-
 	if (timer1.timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
 		//TODO: error "Timer1设置的中断过快!"
 	}
 	else if ((timer1.timerReload/12) < 65536UL){	// 如果用户设置值不合适， 则不启动定时器
 		debugStr("Timer1_init");
+		
 		tInit(&timer1, MAIN_Fosc / 1000);
 		
 		TR1 = 0;	//停止计数
-	
 		ET1 = 1;	//允许中断
 	//	PT1 = 1;	//高优先级中断
 	// 	TMOD &= ~0x30;
@@ -69,21 +86,23 @@ void	Timer2_init(void)
 }
 
 void processTasks(Timer *timer){
+	Node *pNode;
 	TimerTask *pTask;
 	TimerResolution delta;
 
 	timer->tNow = tIncrease(timer->tNow);
 	
 	//TODO: will this _interrupt function re-entrance?
-	pTask = timer->pTaskHead;
-	while(pTask){
+	pNode = timer->pTaskHead;
+	while(pNode){
+		pTask = (TimerTask*)pNode->pData;
 		delta = tSub(timer1.tNow,pTask->lastRun);
 		if(tCmp(delta,pTask->interval)){
 			//time to run
 			pTask->proc();
 		}
 
-		pTask = pTask->next;
+		pNode = (Node*)pNode->next;
 	}
 }
 
@@ -98,3 +117,5 @@ void timer2_int (void) interrupt TIMER2_VECTOR
 {
 	processTasks(&timer2);
 }
+
+

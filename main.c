@@ -117,8 +117,8 @@ void INT0_int (void) interrupt INT0_VECTOR		//进中断时已经清除标志
 	key1.pressed = 1;
 	key1.tPress = timer1GetNow();
 
-	taskDetectKeyRelease = addTimerTask(&timer1.pTaskHead,detectKeyRelease,0,10);
-	taskRotateState = addTimerTask(&timer1.pTaskHead, rotateState, 3,0);
+	taskDetectKeyRelease = addTimerTask(&timer1,detectKeyRelease,0,10);
+	taskRotateState = addTimerTask(&timer1, rotateState, 3,0);
 
 }
 
@@ -152,8 +152,8 @@ void detectKeyRelease(){
 		//detected release
 		key1.pressed = 0;
 
-		delTimerTask(&timer1.pTaskHead,taskRotateState);
-		delTimerTask(&timer1.pTaskHead,taskDetectKeyRelease);
+		delTimerTask(&timer1,taskRotateState);
+		delTimerTask(&timer1,taskDetectKeyRelease);
 	}
 }
 
