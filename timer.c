@@ -11,11 +11,14 @@
 Timer timer1;
 Timer timer2;
 
-void tInit(Timer *timer, u16 reloadCount){
+void tInit(Timer *timer, u32 fsys, u16 overflow){
 	timer->tNow.sec = timer->tNow.msec = 0;
 	timer->pTaskHead = NULL;
 	timer->nextTimerTaskID = 0;
-	timer->timerReload = reloadCount;
+	timer->overflow = overflow;
+	timer->timerReload = fsys / timer->overflow;
+
+	debug("init overflow=%u,%u\n",timer->timerReload,timer->overflow);
 }
 
 TimerResolution tGetNow(Timer *timer)
@@ -47,33 +50,33 @@ void delTimerTask(Timer *timer, TimerTask *pTask){
 
 void	Timer1_init(void)
 {
-	tInit(&timer1, MAIN_Fosc / 1000);
+	tInit(&timer1, MAIN_Fosc, 100 );
 
 	if (timer1.timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
 		//TODO: error "Timer1设置的中断过快!"
 	}
 	else if ((timer1.timerReload/12) < 65536UL){	// 如果用户设置值不合适， 则不启动定时器
-
+debugStr("timer1 initialization 1");
 		TR1 = 0;	//停止计数
-		ET1 = 1;	//允许中断
-	//	PT1 = 1;	//高优先级中断
-	// 	TMOD &= ~0x30;
-	// 	TMOD |= (0 << 4);	//工作模式, 0: 16位自动重装, 1: 16位定时/计数, 2: 8位自动重装
-	// //	TMOD |=  0x40;	//对外计数或分频
-	// 	TMOD &= ~0x40;	//定时
-	// //	INT_CLKO |=  0x02;	//输出时钟
-	// 	INT_CLKO &= ~0x02;	//不输出时钟
-
-	// 	if (timer1.timerReload < 65536UL){
-	// 		AUXR |=  0x40;	//1T mode
-	// 		TH1 = (u8)((65536UL - timer1.timerReload) / 256);
-	// 		TL1 = (u8)((65536UL - timer1.timerReload) % 256);
-	// 	}
-	// 	else{
-	// 		AUXR &= ~0x40;	//12T mode
-	// 		TH1 = (u8)((65536UL - timer1.timerReload/12) / 256);
-	// 		TL1 = (u8)((65536UL - timer1.timerReload/12) % 256);
-	// 	}
+		//ET1 = 1;	//允许中断
+		//PT1 = 1;	//高优先级中断
+		//TMOD &= ~0x30;
+		//TMOD |= (0 << 4);	//工作模式, 0: 16位自动重装, 1: 16位定时/计数, 2: 8位自动重装
+	//	TMOD |=  0x40;	//对外计数或分频
+		//TMOD &= ~0x40;	//定时
+	//	INT_CLKO |=  0x02;	//输出时钟
+		//INT_CLKO &= ~0x02;	//不输出时钟
+debugStr("timer1 initialization 2");
+		if (timer1.timerReload < 65536UL){debugStr("timer1 initialization 3");
+			AUXR |=  0x40;	//1T mode
+			TH1 = (u8)((65536UL - timer1.timerReload) / 256);
+			TL1 = (u8)((65536UL - timer1.timerReload) % 256);
+		}
+		else{debugStr("timer1 initialization 4");
+			AUXR &= ~0x40;	//12T mode
+			TH1 = (u8)((65536UL - timer1.timerReload/12) / 256);
+			TL1 = (u8)((65536UL - timer1.timerReload/12) % 256);
+		}
 
 		TR1 = 1;	//开始运行
 
@@ -86,7 +89,7 @@ void	Timer1_init(void)
 
 void	Timer2_init(void)
 {
-	tInit(&timer2, MAIN_Fosc / 11111 /*90us*/);
+	tInit(&timer2, MAIN_Fosc , 11111 /*90us*/);
 }
 
 void processTasks(Timer *timer){
@@ -95,9 +98,11 @@ void processTasks(Timer *timer){
 	TimerResolution delta;
 	
 	int taskCount = 0;
+	int sec1 = timer->tNow.sec;
 
-	timer->tNow = tIncrease(timer->tNow);
-	debug("tNow updated(%d,%d)\n",timer->tNow.sec,timer->tNow.msec);
+	timer->tNow = tIncrease(timer->tNow, timer->overflow);
+	if(timer->tNow.sec > sec1)
+		debug("after tNow updated(%ld,%d)\n",timer->tNow.sec,timer->tNow.msec);
 	//TODO: will this _interrupt function re-entrance?
 	pNode = timer->pTaskHead;
 	while(pNode){
@@ -113,7 +118,7 @@ void processTasks(Timer *timer){
 
 		pNode = pNode->next;
 	} 
-	debug("loop through %d tasks\n", taskCount);
+	//debug("loop through %d tasks\n", taskCount);
 }
 
 void timer1_int (void) interrupt TIMER1_VECTOR

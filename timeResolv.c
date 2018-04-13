@@ -1,9 +1,11 @@
 #include "timeResolv.h"
 #include <stdlib.h>
+#include "debug.h"
 
-TimerResolution tIncrease(TimerResolution t){
-	   ++t.msec;
-	if(t.msec >= 1000){
+TimerResolution tIncrease(TimerResolution t, u16 msecOverflow){
+	++t.msec;
+	if(t.msec >= msecOverflow){
+		//debug("overflow, sec = %lu, msec = %u, overflow=%u\n",t.sec,t.msec,msecOverflow);
 		t.msec = 0;
 		++t.sec;
 	}

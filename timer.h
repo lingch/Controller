@@ -12,6 +12,7 @@ typedef struct {
 	TimerResolution tNow;
 	Node *pTaskHead;
 	 u8 nextTimerTaskID;
+	 u16 overflow;
 	 u16 timerReload;
 } Timer;
 

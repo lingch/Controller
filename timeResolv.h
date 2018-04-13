@@ -10,7 +10,7 @@ typedef struct{
 	u16 msec;
 } TimerResolution;
 
-TimerResolution tIncrease(TimerResolution t);
+TimerResolution tIncrease(TimerResolution t, u16 msecOverflow);
 char tCmp(TimerResolution t1, TimerResolution t2);
 TimerResolution tSub(TimerResolution t1, TimerResolution t2);
 
