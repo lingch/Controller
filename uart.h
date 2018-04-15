@@ -4,6 +4,8 @@
 //#include	"config.h"
 #include	"STC15Fxxxx.H"
 
+#define UartInit UartInitUseT2
+
 void UartInit();
 void SendData(unsigned char ch);
 void SendString(char *s);
