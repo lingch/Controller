@@ -1,5 +1,3 @@
-#define MAIN_Fosc		11059200L	//定义主时钟
-
 #include	"STC15Fxxxx.H"
 #include "uart.h"
 #include "timer.h"
