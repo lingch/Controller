@@ -137,6 +137,7 @@ working=1;
 /********************* INT0中断函数 *************************/
 void INT0_int (void) interrupt INT0_VECTOR		//进中断时已经清除标志
 {
+	return;
 	debugStr("detected key press");
 	
 	working = 1;
