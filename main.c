@@ -3,6 +3,7 @@
 #include "timer.h"
 #include "delay.h"
 #include "debug.h"
+#include"pca.h"
 
 #include <stdio.h>
 
@@ -110,7 +111,8 @@ void mainInit(){
 
 void main(void)
 {
-	UartInit();
+	UartInit(); 
+	pcaInit();
 	Timer1_init();
 	//Timer2_init();
 	mainInit();
