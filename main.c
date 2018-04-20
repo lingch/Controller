@@ -3,7 +3,8 @@
 #include "timer.h"
 #include "delay.h"
 #include "debug.h"
-#include"pca.h"
+#include "pca.h"
+#include "key.h"
 
 #include <stdio.h>
 
@@ -94,16 +95,13 @@ void mainInit(){
 	working = 0;
 
 	EA = 1;		//允许总中断
-	IE0  = 0;	//外中断0标志位
-	EX0 = 1;	//INT0 Enable
-	IT0 = 1; //down edge trigger
 	
 	state = Hold1;
 	
 	P0M1 = 0;	P0M0 = 1;	//设置推挽模式
 	P1M1 = 0;	P1M1 = 0;	//设置为准双向口
 	P5M1 = 0;	P5M0 = 0;	//设置为准双向口
-	//P0=0x01;
+	P0=0xff;
 	P1=0xff;
 
 	debugStr("main process initialization OK");
@@ -112,14 +110,15 @@ void mainInit(){
 void main(void)
 {
 	UartInit(); 
-	pcaInit();
+	//pcaInit();
 	Timer1_init();
 	//Timer2_init();
+	keyInit();
 	mainInit();
 
 	debugStr("all initialization done, main process started");
 	
-	taskRunningLight = addTimerTask(&timer1,flashRunningLight,0,100);
+	//taskRunningLight = addTimerTask(&timer1,flashRunningLight,0,100);
 working=1;
 	while(1){
 		if(!working){
