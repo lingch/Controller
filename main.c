@@ -42,7 +42,7 @@ typedef struct
 KeyPress key1;
 TimerTask* taskRotateState = NULL;
 TimerTask* taskDetectKeyRelease = NULL;
-TimerTask* taskRunningLight = NULL;
+
 
 void detectKeyRelease();
 void rotateState();
@@ -118,7 +118,6 @@ void main(void)
 
 	debugStr("all initialization done, main process started");
 	
-	//taskRunningLight = addTimerTask(&timer1,flashRunningLight,0,100);
 working=1;
 	while(1){
 		if(!working){
