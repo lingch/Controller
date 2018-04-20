@@ -13,6 +13,8 @@ void pcaInit(){
 	//ECCF0 = 1;enable interupt for PCA0
 	CCAPM0 |= 0x31;	//both positive & nagative edge trigger for PCA0; 
 
+	CR = 1;
+
 	debugStr("PCA initialization OK");
 }
 
@@ -30,9 +32,14 @@ float measurePressTime(){
 	return ret + part; // ret * (cfCount + );
 }
 
+u8 nStatus = 3;
+u8 idxStatus = 0;
 void pcaInt (void) interrupt PCA_VECTOR{
 	if(CF){
 		CF = 0;
+
+		idxStatus = cfCount / 50 % nStatus;
+		P0 = 0x01;
 
 		cfCount++;
 	}
@@ -45,13 +52,11 @@ void pcaInt (void) interrupt PCA_VECTOR{
 			//pressed down
 			cfCount = 0;
 			CH=CL=0;
-			CR = 1;
 
 			debug("PCA pressed\n");
 		}else{
 			//release
 			float sec = measurePressTime();
-			CR = 0;
 
 			debug("PCA released, last time=%f\n",sec);
 		}

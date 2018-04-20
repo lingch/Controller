@@ -103,7 +103,7 @@ void mainInit(){
 	P0M1 = 0;	P0M0 = 1;	//设置推挽模式
 	P1M1 = 0;	P1M1 = 0;	//设置为准双向口
 	P5M1 = 0;	P5M0 = 0;	//设置为准双向口
-	P0=0x01;
+	//P0=0x01;
 	P1=0xff;
 
 	debugStr("main process initialization OK");
