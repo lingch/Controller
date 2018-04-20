@@ -403,6 +403,11 @@
               <FileType>1</FileType>
               <FilePath>.\list.c</FilePath>
             </File>
+            <File>
+              <FileName>pca.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\pca.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -437,6 +442,11 @@
               <FileName>debug.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\debug.h</FilePath>
+            </File>
+            <File>
+              <FileName>pca.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\pca.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -3,6 +3,8 @@
 
 void UartInitUseT1(void)		//9600bps@11.0592MHz
 {
+	//S1_USE_P36P37();
+
 	PCON &= 0x7F;		//波特率不倍速(SM0D=0)
 	SCON = 0x50;		//8位数据,可变波特率
 	AUXR |= 0x40;		//定时器1时钟为Fosc,即1T
