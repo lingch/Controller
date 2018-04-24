@@ -45,8 +45,7 @@ void UartInitUseT2(void)		//9600bps@11.0592MHz
 	IE2 &= (~0x04);		//½ûÖ¹¶¨Ê±Æ÷2ÖÐ¶Ï
 	AUXR |= 0x10;		//Start T2
 
-	debugStr("1234567890"); 
-	//debugStr("uart initialization OK");
+	debugStr("uart initialization OK");
 }
 
 /*----------------------------

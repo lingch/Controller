@@ -14,7 +14,7 @@
 #ifndef		__CONFIG_H
 #define		__CONFIG_H
 
-
+#define NULL 0
 /*********************************************************/
 
 //#define MAIN_Fosc		22118400L	//定义主时钟

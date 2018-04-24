@@ -5,6 +5,7 @@
 #include "debug.h"
 #include "pca.h"
 #include "key.h"
+#include "mgrState.h"
 
 #include <stdio.h>
 
@@ -17,86 +18,13 @@
 #define		Timer0_Reload	(65536UL -(MAIN_Fosc / 1000))		//Timer 0 中断频率, 1000次/秒
 
 /********************** 主函数 ************************/
-
-enum EState {Hold1=0, Hold2, Hold3};
-
-sbit Key1 = P1^0;
-sbit LightHold1=P0^1;
-sbit LightHold2=P0^2;
-sbit LightHold3=P0^3;
-
-#define LIGHT_ON 0
-#define LIGHT_OFF 1
-
-#define KEY_PRESSED 0
-#define KEY_RELEASED 1
-
-enum EState state;
-
-typedef struct 
-{
-	char pressed;
-	TimerResolution tPress;
-} KeyPress;
-
-KeyPress key1;
-TimerTask* taskRotateState = NULL;
-TimerTask* taskDetectKeyRelease = NULL;
-
-
-void detectKeyRelease();
-void rotateState();
-
 u8 working;
 
 
-void rotateState(){
-	state = (state + 1) % 3;	//shift state
-
-	//Light on/off
-	switch(state){
-		case Hold1:
-			LightHold1 = LIGHT_ON;
-			LightHold2 = LightHold3 = LIGHT_OFF;
-			break;
-		case Hold2:
-			LightHold2 = LIGHT_ON;
-			LightHold1 = LightHold3 = LIGHT_OFF;
-			break;
-		case Hold3:
-			LightHold3 = LIGHT_ON;
-			LightHold1 = LightHold2 = LIGHT_OFF;
-			break;
-		default:
-			break;
-	}
-}
-
-void detectKeyRelease(){
-	if(key1.pressed ==1 && Key1 == KEY_RELEASED){
-		
-		debugStr("detected key release");
-		
-		//detected release
-		key1.pressed = 0;
-
-		delTimerTask(&timer1,taskRotateState);
-		delTimerTask(&timer1,taskDetectKeyRelease);
-	}
-}
-
-void flashRunningLight(){
-	P55 = ~P55;
-}
-
-
 void mainInit(){
-	key1.pressed = 0;
 	working = 0;
-
-	EA = 1;		//允许总中断
 	
-	state = Hold1;
+	EA = 1;		//允许总中断
 	
 	P0M1 = 0;	P0M0 = 1;	//设置推挽模式
 	P1M1 = 0;	P1M1 = 0;	//设置为准双向口
@@ -114,6 +42,7 @@ void main(void)
 	Timer1_init();
 	//Timer2_init();
 	keyInit();
+	mgrStateInit();
 	mainInit();
 
 	debugStr("all initialization done, main process started");
@@ -132,24 +61,4 @@ working=1;
 	
 }
 
-/********************* INT0中断函数 *************************/
-void INT0_int (void) interrupt INT0_VECTOR		//进中断时已经清除标志
-{
-	return;
-	debugStr("detected key press");
-	
-	working = 1;
 
-	if(key1.pressed){
-		debugStr("key already pressed");
-		return;	//already pressed? should not be possible
-		//TODO: add a debug warning
-	}
-
-	key1.pressed = 1;
-	key1.tPress = tGetNow(&timer1);
-
-	taskDetectKeyRelease = addTimerTask(&timer1,detectKeyRelease,0,10);
-	taskRotateState = addTimerTask(&timer1, rotateState, 3,0);
-
-}

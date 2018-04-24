@@ -408,6 +408,11 @@
               <FileType>1</FileType>
               <FilePath>.\pca.c</FilePath>
             </File>
+            <File>
+              <FileName>key.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\key.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -447,6 +452,11 @@
               <FileName>pca.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\pca.h</FilePath>
+            </File>
+            <File>
+              <FileName>key.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\key.h</FilePath>
             </File>
           </Files>
         </Group>
