@@ -19,12 +19,11 @@ void timerTaskInit(){
 TimerTask* createTimerTask(u32 sec, u16 msec,TimerProc callback){
 	TimerTask *ret = (TimerTask*)malloc(sizeof( TimerTask) / sizeof(u8));
 
-	ret->id = TIMER_TASK_ID;
+	ret->id = TIMER_TASK_ID++;
 	ret->proc = callback;
 	ret->interval.sec = sec; 
 	ret->interval.msec = msec;
 
-	debug("111112=%bd,%bd\n",TIMER_TASK_ID,ret->id);
 	return ret;
 }
 

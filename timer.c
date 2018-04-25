@@ -2,8 +2,9 @@
 定时器1做16位自动重装, 中断频率为1000HZ?
 ******************************************/
 
+#include "config.h"
 #include "timer.h"
-#include <stdlib.h>
+#include "timerTask.h"
 #include "debug.h"
 
 /*-------The timer structure--------*/
@@ -34,8 +35,10 @@ TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
 	task->lastRun = tGetNow(timer);
 	node = addNode(timer->pTaskHead, task);
 	timer->pTaskHead = node;
-	
-	debug("added id=%bd \r\n",task->id);
+	//TODO: interup priority problem
+	debugStr("11111111111111111111111111");
+	debug("task added, id=%bd, lastrun=%lu,%u \r\n",task->id,
+		task->lastRun.sec,task->lastRun.msec);
 
 	return task;
 }
