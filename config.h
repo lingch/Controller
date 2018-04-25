@@ -14,7 +14,7 @@
 #ifndef		__CONFIG_H
 #define		__CONFIG_H
 
-#define NULL 0
+//#define NULL 0
 /*********************************************************/
 
 //#define MAIN_Fosc		22118400L	//定义主时钟
@@ -26,11 +26,9 @@
 
 /*********************************************************/
 
+
 //#include	"STC15.H"
 #include	"STC15Fxxxx.H"
-
-//typedef 	unsigned char	u8;
-//typedef 	unsigned int	u16;
-//typedef 	unsigned long	u32;
+#include <stdlib.h>
 
 #endif

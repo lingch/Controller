@@ -124,7 +124,7 @@
             <Oh166RecLen>16</Oh166RecLen>
           </OPTHX>
           <Simulator>
-            <UseSimulator>0</UseSimulator>
+            <UseSimulator>1</UseSimulator>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>1</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -136,7 +136,7 @@
             <RestoreSysVw>1</RestoreSysVw>
           </Simulator>
           <Target>
-            <UseTarget>1</UseTarget>
+            <UseTarget>0</UseTarget>
             <LoadApplicationAtStartup>1</LoadApplicationAtStartup>
             <RunToMain>0</RunToMain>
             <RestoreBreakpoints>1</RestoreBreakpoints>
@@ -193,7 +193,7 @@
             <UseOnchipRom>0</UseOnchipRom>
             <UseOnchipArithmetic>0</UseOnchipArithmetic>
             <UseMultipleDPTR>0</UseMultipleDPTR>
-            <UseOnchipXram>0</UseOnchipXram>
+            <UseOnchipXram>1</UseOnchipXram>
             <HadIRAM>1</HadIRAM>
             <HadXRAM>1</HadXRAM>
             <HadIROM>1</HadIROM>
@@ -413,6 +413,11 @@
               <FileType>1</FileType>
               <FilePath>.\key.c</FilePath>
             </File>
+            <File>
+              <FileName>MgrState.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\MgrState.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -457,6 +462,11 @@
               <FileName>key.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\key.h</FilePath>
+            </File>
+            <File>
+              <FileName>MgrState.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\MgrState.h</FilePath>
             </File>
           </Files>
         </Group>

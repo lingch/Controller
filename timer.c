@@ -12,6 +12,8 @@ Timer timer1;
 Timer timer2;
 
 void tInit(Timer *timer, u32 fsys, u16 overflow){
+	timerTaskInit();
+
 	timer->tNow.sec = timer->tNow.msec = 0;
 	timer->pTaskHead = NULL;
 	timer->nextTimerTaskID = 0;
@@ -29,12 +31,11 @@ TimerResolution tGetNow(Timer *timer)
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
 	Node *node;
 	TimerTask *task = createTimerTask(sec,msec,callback);
-	debug("task created, id=%x\n",task->id);
 	task->lastRun = tGetNow(timer);
 	node = addNode(timer->pTaskHead, task);
-	debug("added node=%08x,id=%x to %08x \n",node,task->id,timer->pTaskHead);
 	timer->pTaskHead = node;
-	debugStr("OK");
+	
+	debug("added id=%bd \r\n",task->id);
 
 	return task;
 }
@@ -113,10 +114,10 @@ void processTasks(Timer *timer){
 		if(tCmp(delta,pTask->interval)){
 			//time to run
 			debug("task id=%x, lastrun=%lu,%u, now=%lu,%u, delta=%lu,%u, interval=%lu,%u\n",
-				pTask->id, pTask->lastRun.sec,pTask->lastRun.msec,
-				timer1.tNow.sec,timer1.tNow.msec,
-				delta.sec,delta.msec,
-				pTask->interval.sec,pTask->interval.msec);
+				(u8)pTask->id, (u32)pTask->lastRun.sec,(u16)pTask->lastRun.msec,
+				(u32)timer1.tNow.sec,(u16)timer1.tNow.msec,
+				(u32)delta.sec,(u16)delta.msec,
+				(u32)pTask->interval.sec,(u16)pTask->interval.msec);
 			debugStr("timer1 run callback");
 			pTask->proc();
 		}

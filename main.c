@@ -6,6 +6,7 @@
 #include "pca.h"
 #include "key.h"
 #include "mgrState.h"
+#include "mem.h"
 
 #include <stdio.h>
 
@@ -37,7 +38,9 @@ void mainInit(){
 
 void main(void)
 {
+	memInit();
 	UartInit(); 
+	debugInit();
 	//pcaInit();
 	Timer1_init();
 	//Timer2_init();
@@ -46,7 +49,7 @@ void main(void)
 	mainInit();
 
 	debugStr("all initialization done, main process started");
-	
+
 working=1;
 	while(1){
 		if(!working){
