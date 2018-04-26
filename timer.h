@@ -15,7 +15,7 @@ typedef struct {
 	Node *pTaskHead;
 	 u8 nextTimerTaskID;
 	 u16 overflow;
-	 u16 timerReload;
+	 u32 timerReload;
 
 	 PTRunControl cStart;
 	 PTRunControl cStop;

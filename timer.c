@@ -26,7 +26,7 @@ void tInit(Timer *timer, u32 fsys, u16 overflow){
 	timer->cStart = NULL;
 	timer->cStop = NULL;
 
-	debug("tInit timerReload=%u, overflow=%u \r\n",timer->timerReload,timer->overflow);
+	debug("tInit timerReload=%lu, overflow=%u \r\n",timer->timerReload,timer->overflow);
 }
 
 TimerResolution tGetNow(Timer *timer)
@@ -37,6 +37,12 @@ TimerResolution tGetNow(Timer *timer)
 	timer->cStart();
 
 	return t;
+}
+void tSetNow(Timer *timer, TimerResolution tNow)
+{
+	timer->cStop();
+	timer->tNow = tNow;
+	timer->cStart();
 }
 
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
@@ -118,22 +124,26 @@ void	Timer2_init(void)
 }
 
 void processTasks(Timer *timer){
-	TimerResolution t;
+	TimerResolution tTmp;
 
 	Node *pNode;
 	TimerTask *pTask;
 	TimerResolution delta;
 	
-	u8 taskCount = 0;
-	u32 sec1 = timer->tNow.sec;
+	u8 taskCount;
+	u32 prevSec;
 
-	timer->tNow = tIncrease(timer->tNow, timer->overflow);
-	t = tGetNow(timer);
-	 if(timer->tNow.sec > sec1){
+	prevSec = timer->tNow.sec;
+	//update timer time
+	tTmp = tGetNow(timer);
+	tTmp = tIncrease(tTmp, timer->overflow);
+	tSetNow(timer,tTmp);
+
+	if(timer->tNow.sec > prevSec){
 	 	debug("after tNow updated(%lu,%u)\n",timer->tNow.sec,timer->tNow.msec);
-	 	debug("after tNow updated(%lu,%u)\n",t.sec,t.msec);
 	}
 	//TODO: will this _interrupt function re-entrance?
+	taskCount = 0;
 	pNode = timer->pTaskHead;
 	while(pNode){
 		taskCount++;
