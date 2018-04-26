@@ -8,12 +8,17 @@
 #include "timerTask.h"
 #include "list.h"
 
+typedef void (*PTRunControl)(void);
+
 typedef struct {
 	TimerResolution tNow;
 	Node *pTaskHead;
 	 u8 nextTimerTaskID;
 	 u16 overflow;
 	 u16 timerReload;
+
+	 PTRunControl cStart;
+	 PTRunControl cStop;
 } Timer;
 
 extern Timer timer1;

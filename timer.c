@@ -15,31 +15,46 @@ Timer timer2;
 void tInit(Timer *timer, u32 fsys, u16 overflow){
 	timerTaskInit();
 
-	timer->tNow.sec = timer->tNow.msec = 0;
+	timer->tNow.msec = 0;
+	timer->tNow.sec = 0;
 	timer->pTaskHead = NULL;
 	timer->nextTimerTaskID = 0;
 	timer->overflow = overflow;
 	timer->timerReload = fsys / timer->overflow;
+
+	//control function initialization
+	timer->cStart = NULL;
+	timer->cStop = NULL;
 
 	debug("tInit timerReload=%u, overflow=%u \r\n",timer->timerReload,timer->overflow);
 }
 
 TimerResolution tGetNow(Timer *timer)
 {
-	return timer->tNow;
+	TimerResolution t;
+	timer->cStop();
+	t = timer->tNow;
+	timer->cStart();
+
+	return t;
 }
 
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
+	
 	Node *node;
-	TimerTask *task = createTimerTask(sec,msec,callback);
-	task->lastRun = tGetNow(timer);
+	TimerTask *task;
+
+	task = createTimerTask(sec,msec,callback);
+
+TR1 = 0;
 	node = addNode(timer->pTaskHead, task);
 	timer->pTaskHead = node;
+	
 	//TODO: interup priority problem
-	debugStr("11111111111111111111111111");
 	debug("task added, id=%bd, lastrun=%lu,%u \r\n",task->id,
 		task->lastRun.sec,task->lastRun.msec);
 
+TR1 = 1;
 	return task;
 }
 
@@ -51,10 +66,18 @@ void delTimerTask(Timer *timer, TimerTask *pTask){
 	debugStr("task free");
 }
 
+void t1Stop(){
+	TR1=0;
+}
+void t1Start(){
+	TR1=1;
+}
 
 void	Timer1_init(void)
 {
 	tInit(&timer1, MAIN_Fosc, 100 );
+	timer1.cStart = t1Start;
+	timer1.cStop = t1Stop;
 
 	if (timer1.timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
 		debugStr("Timer1 init too fast");
@@ -95,6 +118,8 @@ void	Timer2_init(void)
 }
 
 void processTasks(Timer *timer){
+	TimerResolution t;
+
 	Node *pNode;
 	TimerTask *pTask;
 	TimerResolution delta;
@@ -103,9 +128,11 @@ void processTasks(Timer *timer){
 	u32 sec1 = timer->tNow.sec;
 
 	timer->tNow = tIncrease(timer->tNow, timer->overflow);
-	// if(timer->tNow.sec > sec1)
-	// 	debug("after tNow updated(%lu,%u)\n",timer->tNow.sec,timer->tNow.msec);
-
+	t = tGetNow(timer);
+	 if(timer->tNow.sec > sec1){
+	 	debug("after tNow updated(%lu,%u)\n",timer->tNow.sec,timer->tNow.msec);
+	 	debug("after tNow updated(%lu,%u)\n",t.sec,t.msec);
+	}
 	//TODO: will this _interrupt function re-entrance?
 	pNode = timer->pTaskHead;
 	while(pNode){
@@ -114,15 +141,18 @@ void processTasks(Timer *timer){
 		pTask = (TimerTask*)pNode->pData;
 		delta = tSub(timer1.tNow,pTask->lastRun);
 
-		if(tCmp(delta,pTask->interval)){
+		if(tCmp(delta,pTask->interval) > 0){
 			//time to run
-			debug("task id=%x, lastrun=%lu,%u, now=%lu,%u, delta=%lu,%u, interval=%lu,%u\n",
+			debug("task id=%bd, lastrun=%lu,%u, now=%lu,%u, delta=%lu,%u, interval=%lu,%u\n",
 				(u8)pTask->id, (u32)pTask->lastRun.sec,(u16)pTask->lastRun.msec,
 				(u32)timer1.tNow.sec,(u16)timer1.tNow.msec,
 				(u32)delta.sec,(u16)delta.msec,
 				(u32)pTask->interval.sec,(u16)pTask->interval.msec);
 			debugStr("timer1 run callback");
 			pTask->proc();
+
+			//update last run timestamp
+			pTask->lastRun = timer1.tNow;
 		}
 
 		pNode = pNode->next;
@@ -132,10 +162,7 @@ void processTasks(Timer *timer){
 
 void timer1_int (void) interrupt TIMER1_VECTOR
 {
-	//debugStr("timer int");
-	//debugStr("timer1 int enter");
 	processTasks(&timer1);
-	//debugStr("timer1 int exit");
 }
 
 void timer2_int (void) interrupt TIMER2_VECTOR
