@@ -4,6 +4,7 @@
 u32 cfCount;
 
 sbit PCA_INPUT=P1^1;
+sbit PCA_INDICATOR=P0^0;
 
 void pcaInit(){
 	cfCount = 0;
@@ -39,7 +40,6 @@ void pcaInt (void) interrupt PCA_VECTOR{
 		CF = 0;
 
 		idxStatus = cfCount / 50 % nStatus;
-		P0 = 0x01;
 
 		cfCount++;
 	}

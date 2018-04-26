@@ -5,10 +5,14 @@
 
 #include	"STC15Fxxxx.H"
 
+enum EState {Idle=0, Hold1, Hold2, Hold3};
+
 void mgrStateInit();
 
 void detectKeyRelease();
 void rotateState();
+enum EState getCurState();
+
 
 #endif
 

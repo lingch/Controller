@@ -47,10 +47,13 @@ void tSetNow(Timer *timer, TimerResolution tNow)
 
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
 	
+	TimerResolution tNow;
 	Node *node;
 	TimerTask *task;
 
 	task = createTimerTask(sec,msec,callback);
+	tNow = tGetNow(timer);
+	task->lastRun = tNow;
 
 TR1 = 0;
 	node = addNode(timer->pTaskHead, task);

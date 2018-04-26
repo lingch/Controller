@@ -20,12 +20,25 @@ void keyInit(){
 void onKeyDown(){
 	//taskRunningLight = addTimerTask(&timer1,flashRunningLight,0,100);
 	taskRotateState = addTimerTask(&timer1, rotateState, 3,0);
-	P0 = 0x00;
 }
 
 void onKeyUp(){
+	enum EState state;
+
 	delTimerTask(&timer1,taskRotateState);
-	P0 = 0xff;
+	
+
+	state = getCurState();
+	switch(state){
+		case Idle:
+		break;
+		case Hold1:
+		break;
+		case Hold2:
+		break;
+		case Hold3:
+		break;
+	}
 }
 
 
