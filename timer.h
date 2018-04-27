@@ -9,6 +9,7 @@
 #include "list.h"
 
 typedef void (*PTRunControl)(void);
+typedef void (*PTSet)(u8 param);
 
 typedef struct {
 	TimerResolution tNow;
@@ -19,9 +20,14 @@ typedef struct {
 
 	 PTRunControl cStart;
 	 PTRunControl cStop;
+	 PTSet cSet12T;
+	 PTSet cSetTH;
+	 PTSet cSetTL;
 } Timer;
 
 void tInit(Timer *timer, u32 fsys, u16 overflow);
+void timerInit(Timer *timer);
+
 TimerResolution tGetNow(Timer *timer);
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec);
 void delTimerTask(Timer *timer, TimerTask *p);

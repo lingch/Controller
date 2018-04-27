@@ -19,12 +19,42 @@ void tInit(Timer *timer, u32 fsys, u16 overflow){
 	timer->overflow = overflow;
 	timer->timerReload = fsys / timer->overflow;
 
-	//control function initialization
-	timer->cStart = NULL;
-	timer->cStop = NULL;
-
 	debug("tInit timerReload=%lu, overflow=%u \r\n",timer->timerReload,timer->overflow);
 }
+
+void timerInit(Timer *timer)
+{
+	if (timer->timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
+		debugStr("Timer init too fast");
+		PCON |= 0x02; //sleep
+	}
+	else if ((timer->timerReload/12) < 65536UL){	// 如果用户设置值不合适， 则不启动定时器
+
+		timer->cStop();
+
+		if (timer->timerReload < 65536UL){
+			debug("timer 1T mode ");
+			timer->cSet12T(0);
+			timer->cSetTH((u8)((65536UL - timer->timerReload) / 256));
+			timer->cSetTL((u8)((65536UL - timer->timerReload) % 256));
+		}
+		else{
+			debug("timer 12T mode ");
+			timer->cSet12T(1);
+			timer->cSetTH((u8)((65536UL - timer->timerReload/12) / 256));
+			timer->cSetTL((u8)((65536UL - timer->timerReload/12) % 256));
+		}
+
+		timer->cStart();
+
+		debug("initialization OK\n");
+	}
+	else{
+		debugStr("Timer init too slow");
+		PCON |= 0x02; //sleep
+	}
+}
+
 
 TimerResolution tGetNow(Timer *timer)
 {
