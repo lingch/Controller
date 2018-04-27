@@ -21,13 +21,12 @@ typedef struct {
 	 PTRunControl cStop;
 } Timer;
 
-extern Timer timer1;
 extern Timer timer2;
 
-void	Timer1_init(void);
+void tInit(Timer *timer, u32 fsys, u16 overflow);
 TimerResolution tGetNow(Timer *timer);
 TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec);
 void delTimerTask(Timer *timer, TimerTask *p);
-
+void processTasks(Timer *timer);
 
 #endif

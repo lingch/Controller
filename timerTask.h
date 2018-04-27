@@ -13,6 +13,7 @@ typedef struct {
 	TimerResolution lastRun;
 }TimerTask;
 
+void timerTaskInit();
 TimerTask* createTimerTask(u32 sec, u16 msec,TimerProc callback);
 void freeTimerTask(TimerTask *pTask);
 

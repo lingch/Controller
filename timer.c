@@ -9,7 +9,6 @@
 
 /*-------The timer structure--------*/
 
-Timer timer1;
 Timer timer2;
 
 void tInit(Timer *timer, u32 fsys, u16 overflow){
@@ -55,7 +54,7 @@ TimerTask* addTimerTask(Timer *timer, TimerProc callback, u32 sec, u16 msec){
 	tNow = tGetNow(timer);
 	task->lastRun = tNow;
 
-TR1 = 0;
+	timer->cStop();
 	node = addNode(timer->pTaskHead, task);
 	timer->pTaskHead = node;
 	
@@ -63,7 +62,7 @@ TR1 = 0;
 	debug("task added, id=%bd, lastrun=%lu,%u \r\n",task->id,
 		task->lastRun.sec,task->lastRun.msec);
 
-TR1 = 1;
+	timer->cStart();
 	return task;
 }
 
@@ -75,51 +74,6 @@ void delTimerTask(Timer *timer, TimerTask *pTask){
 	debugStr("task free");
 }
 
-void t1Stop(){
-	TR1=0;
-}
-void t1Start(){
-	TR1=1;
-}
-
-void	Timer1_init(void)
-{
-	tInit(&timer1, MAIN_Fosc, 100 );
-	timer1.cStart = t1Start;
-	timer1.cStop = t1Stop;
-
-	if (timer1.timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
-		debugStr("Timer1 init too fast");
-		PCON |= 0x02; //sleep
-	}
-	else if ((timer1.timerReload/12) < 65536UL){	// 如果用户设置值不合适， 则不启动定时器
-
-		TR1 = 0;	//停止计数
-		ET1 = 1;	//允许中断
-		PT1 = 1;	//高优先级中断
-
-		if (timer1.timerReload < 65536UL){
-			debug("timer1 1T mode ");
-			AUXR |=  0x40;	//1T mode
-			TH1 = (u8)((65536UL - timer1.timerReload) / 256);
-			TL1 = (u8)((65536UL - timer1.timerReload) % 256);
-		}
-		else{
-			debug("timer1 12T mode ");
-			AUXR &= ~0x40;	//12T mode
-			TH1 = (u8)((65536UL - timer1.timerReload/12) / 256);
-			TL1 = (u8)((65536UL - timer1.timerReload/12) % 256);
-		}
-
-		TR1 = 1;	//开始运行
-
-		debug("initialization OK\n");
-	}
-	else{
-		debugStr("Timer1 init too slow");
-		PCON |= 0x02; //sleep
-	}
-}
 
 void	Timer2_init(void)
 {
@@ -152,30 +106,25 @@ void processTasks(Timer *timer){
 		taskCount++;
 
 		pTask = (TimerTask*)pNode->pData;
-		delta = tSub(timer1.tNow,pTask->lastRun);
+		delta = tSub(tTmp,pTask->lastRun);
 
 		if(tCmp(delta,pTask->interval) > 0){
 			//time to run
 			debug("task id=%bd, lastrun=%lu,%u, now=%lu,%u, delta=%lu,%u, interval=%lu,%u\n",
 				(u8)pTask->id, (u32)pTask->lastRun.sec,(u16)pTask->lastRun.msec,
-				(u32)timer1.tNow.sec,(u16)timer1.tNow.msec,
+				(u32)tTmp.sec,(u16)tTmp.msec,
 				(u32)delta.sec,(u16)delta.msec,
 				(u32)pTask->interval.sec,(u16)pTask->interval.msec);
-			debugStr("timer1 run callback");
+			debugStr("timer run callback");
 			pTask->proc();
 
 			//update last run timestamp
-			pTask->lastRun = timer1.tNow;
+			pTask->lastRun = tTmp;
 		}
 
 		pNode = pNode->next;
 	} 
 	//debug("loop through %d tasks\n", taskCount);
-}
-
-void timer1_int (void) interrupt TIMER1_VECTOR
-{
-	processTasks(&timer1);
 }
 
 void timer2_int (void) interrupt TIMER2_VECTOR

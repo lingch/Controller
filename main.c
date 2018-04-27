@@ -7,6 +7,7 @@
 #include "key.h"
 #include "mgrState.h"
 #include "mem.h"
+#include "timer1.h"
 
 #include <stdio.h>
 
@@ -42,7 +43,7 @@ void main(void)
 	UartInit(); 
 	debugInit();
 	//pcaInit();
-	Timer1_init();
+	t1Init();
 	//Timer2_init();
 	keyInit();
 	mgrStateInit();

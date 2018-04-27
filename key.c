@@ -3,6 +3,7 @@
 #include "debug.h"
 #include "TimerTask.h"
 #include "timer.h"
+#include "timer1.h"
 #include "STC15Fxxxx.h"
 
 #include "mgrstate.h"
