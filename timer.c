@@ -9,8 +9,6 @@
 
 /*-------The timer structure--------*/
 
-Timer timer2;
-
 void tInit(Timer *timer, u32 fsys, u16 overflow){
 	timerTaskInit();
 
@@ -75,11 +73,6 @@ void delTimerTask(Timer *timer, TimerTask *pTask){
 }
 
 
-void	Timer2_init(void)
-{
-	tInit(&timer2, MAIN_Fosc , 11111 /*90us*/);
-}
-
 void processTasks(Timer *timer){
 	TimerResolution tTmp;
 
@@ -126,10 +119,3 @@ void processTasks(Timer *timer){
 	} 
 	//debug("loop through %d tasks\n", taskCount);
 }
-
-void timer2_int (void) interrupt TIMER2_VECTOR
-{
-	processTasks(&timer2);
-}
-
-
