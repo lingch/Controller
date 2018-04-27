@@ -4,10 +4,12 @@
 #include "TimerTask.h"
 #include "timer.h"
 #include "timer1.h"
+#include "timer2.h"
 #include "STC15Fxxxx.h"
 
 #include "mgrstate.h"
 
+Timer *keyTimer;
 
 TimerTask* taskRunningLight = NULL;
 TimerTask* taskRotateState = NULL;
@@ -15,18 +17,20 @@ TimerTask* taskRotateState = NULL;
 void keyInit(){
 	IT0 = 0;	//both rising edge and down edge trigger
 	EX0 = 1;
+
+	keyTimer = &timer1;
 }
 
 
 void onKeyDown(){
 	//taskRunningLight = addTimerTask(&timer1,flashRunningLight,0,100);
-	taskRotateState = addTimerTask(&timer1, rotateState, 3,0);
+	taskRotateState = addTimerTask(keyTimer, rotateState, 3,0);
 }
 
 void onKeyUp(){
 	enum EState state;
 
-	delTimerTask(&timer1,taskRotateState);
+	delTimerTask(keyTimer,taskRotateState);
 	
 
 	state = getCurState();

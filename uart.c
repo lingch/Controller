@@ -36,14 +36,36 @@ void UartInitUseT2(void)		//9600bps@11.0592MHz
 	//AUXR &= ~0x0C;	//T2 as 1T timer, not counter
 
 	reload = 0xffff - MAIN_Fosc/4/BAUD_RATE;
-	RL_T2L = TL2 = reload & 0x00ff;		
-	RL_T2H = TH2 = (reload  & 0xff00) >> 8;	
+	TL2 = reload & 0x00ff;		
+	TH2 = (reload  & 0xff00) >> 8;	
 	//RL_T2L = TL2 = 0xDC;
 	//RL_T2H = TH2 = 0xff;	
 	//RL_TL1=0xDC;
 
 	IE2 &= (~0x04);		//禁止定时器2中断
 	AUXR |= 0x10;		//Start T2
+
+	debugStr("uart initialization OK");
+}
+
+void uartInit(Timer *timer)		//9600bps@11.0592MHz
+{
+	u16 reload;
+	
+	PCON &= 0x7F;		//波特率不倍速(SM0D=0)
+	//SCON |= 0x80;		//Mode 1
+	SCON |= 0x40;		//SM1=1
+	AUXR |= 0x01;		//S1ST2 = 1
+	
+	timer->cStop();
+	//AUXR &= ~0x0C;	//T2 as 1T timer, not counter
+	timer->cSet12T(0);
+	reload = 0xffff - MAIN_Fosc/4/BAUD_RATE;
+	timer->cSetTH((reload  & 0xff00) >> 8);
+	timer->cSetTL(reload & 0x00ff);		
+
+	timer->cEnableInt(0);
+	timer->cStart();
 
 	debugStr("uart initialization OK");
 }

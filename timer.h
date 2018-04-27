@@ -23,6 +23,7 @@ typedef struct {
 	 PTSet cSet12T;
 	 PTSet cSetTH;
 	 PTSet cSetTL;
+	 PTSet cEnableInt;
 } Timer;
 
 void tInit(Timer *timer, u32 fsys, u16 overflow);

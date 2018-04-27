@@ -8,7 +8,7 @@
 #include "mgrState.h"
 #include "mem.h"
 #include "timer1.h"
-
+#include "timer2.h"
 #include <stdio.h>
 
 #define DIS_DOT		0x20
@@ -40,11 +40,13 @@ void mainInit(){
 void main(void)
 {
 	memInit();
-	UartInit(); 
+	//UartInit(); 
+	t2Init(0);
+	uartInit(&timer2);
 	debugInit();
 	//pcaInit();
-	t1Init();
-	//Timer2_init();
+	t1Init(100 /*100ms*/);
+	//t2Init(11111 /*90us*/);
 	keyInit();
 	mgrStateInit();
 	mainInit();

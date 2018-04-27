@@ -3,7 +3,7 @@
 
 #include "timer.h"
 
-void t2Init();
+void t2Init(u16 overflow);
 
 extern Timer timer2;
 
