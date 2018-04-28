@@ -8,7 +8,7 @@ void t2Stop(){
 	AUXR &= ~0x10;
 }
 void t2Start(){
-	
+	t2EnableInt(0);
 	AUXR |= 0x10;
 }
 void t2EnableInt(u8 param){

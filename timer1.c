@@ -8,7 +8,7 @@ void t1Stop(){
 	TR1=0;
 }
 void t1Start(){
-	
+	t1EnableInt(1);
 	TR1=1;
 }
 

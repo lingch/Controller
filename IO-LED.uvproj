@@ -423,11 +423,31 @@
               <FileType>1</FileType>
               <FilePath>.\mem.c</FilePath>
             </File>
+            <File>
+              <FileName>timer1.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer1.c</FilePath>
+            </File>
+            <File>
+              <FileName>timer2.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer2.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>header</GroupName>
           <Files>
+            <File>
+              <FileName>timer2.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\timer2.h</FilePath>
+            </File>
+            <File>
+              <FileName>timer1.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\timer1.h</FilePath>
+            </File>
             <File>
               <FileName>mem.h</FileName>
               <FileType>5</FileType>
@@ -477,6 +497,11 @@
               <FileName>MgrState.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\MgrState.h</FilePath>
+            </File>
+            <File>
+              <FileName>timer.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\timer.h</FilePath>
             </File>
           </Files>
         </Group>

@@ -119,9 +119,9 @@ void processTasks(Timer *timer){
 	tTmp = tIncrease(tTmp, timer->overflow);
 	tSetNow(timer,tTmp);
 
-	if(timer->tNow.sec > prevSec){
-	 	debug("after tNow updated(%lu,%u)\n",timer->tNow.sec,timer->tNow.msec);
-	}
+	// if(timer->tNow.sec > prevSec){
+	//  	debug("after tNow updated(%lu,%u)\n",timer->tNow.sec,timer->tNow.msec);
+	// }
 	//TODO: will this _interrupt function re-entrance?
 	taskCount = 0;
 	pNode = timer->pTaskHead;
