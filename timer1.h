@@ -5,7 +5,7 @@
 
 extern Timer timer1;
 
-void t1Init(u16 overflow);
+void t1Init( u16 us, u16 overflow);
 void t1EnableInt(u8 param);
 
 

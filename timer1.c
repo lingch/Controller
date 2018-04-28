@@ -36,7 +36,7 @@ void t1SetTL(u8 param){
 	TL1 = param;
 }
 
-void t1Init(u16 overflow)
+void t1Init(u16 us, u16 overflow)
 {
 	timer1.cStart = t1Start;
 	timer1.cStop = t1Stop;
@@ -44,8 +44,8 @@ void t1Init(u16 overflow)
 	timer1.cSetTH = t1SetTH;
 	timer1.cSetTL = t1SetTL;
 	timer1.cEnableInt = t1EnableInt;
-	
-	tInit(&timer1, MAIN_Fosc, overflow );
+
+	tInit(&timer1, MAIN_Fosc, us, overflow);
 	timerInit(&timer1);
 }
 

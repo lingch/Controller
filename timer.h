@@ -26,7 +26,7 @@ typedef struct {
 	 PTSet cEnableInt;
 } Timer;
 
-void tInit(Timer *timer, u32 fsys, u16 overflow);
+void tInit(Timer *timer, u32 fsys, u16 us, u16 overflow);
 void timerInit(Timer *timer);
 
 TimerResolution tGetNow(Timer *timer);

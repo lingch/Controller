@@ -41,12 +41,12 @@ void mainInit(){
 void main(void)
 {
 	memInit();
-	t2Init(100/*not used*/); // uart will reconfigure the timer reload
+	t2Init(0,1000); // uart will reconfigure the timer reload
 	uartInit(&timer2);
 	debugInit();
 	//pcaInit();
-	//t1Init(100 /*100ms*/);
-	t3Init(1111 /*90us*/);
+	t1Init(1000 /*10ms*/,100);
+	//t3Init(1111 /*90us*/);
 	keyInit();
 	mgrStateInit();
 	mainInit();

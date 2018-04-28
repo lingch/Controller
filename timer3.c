@@ -35,7 +35,7 @@ void t3SetTL(u8 param){
 	TL3 = param;
 }
 
-void t3Init(u16 overflow)
+void t3Init(u16 us, u16 overflow)
 {
 	timer3.cStart = t3Start;
 	timer3.cStop = t3Stop;
@@ -44,7 +44,7 @@ void t3Init(u16 overflow)
 	timer3.cSetTL = t3SetTL;
 	timer3.cEnableInt = t3EnableInt;
 	
-	tInit(&timer3, MAIN_Fosc , overflow);
+	tInit(&timer3, MAIN_Fosc , us, overflow);
 	timerInit(&timer3);
 }
 

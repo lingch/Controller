@@ -9,7 +9,8 @@
 
 /*-------The timer structure--------*/
 
-void tInit(Timer *timer, u32 fsys, u16 overflow){
+void tInit(Timer *timer, u32 fsys, u16 us, u16 overflow){
+
 	timerTaskInit();
 
 	timer->tNow.msec = 0;
@@ -17,16 +18,15 @@ void tInit(Timer *timer, u32 fsys, u16 overflow){
 	timer->pTaskHead = NULL;
 	timer->nextTimerTaskID = 0;
 	timer->overflow = overflow;
-	timer->timerReload = fsys / timer->overflow;
+	timer->timerReload = fsys / 1000000 * us;
 
 	debug("tInit timerReload=%lu, overflow=%u \r\n",timer->timerReload,timer->overflow);
 }
 
 void timerInit(Timer *timer)
 {
-	if (timer->timerReload < 64)	{ // 如果用户设置值不合适， 则不启动定时器
-		debugStr("Timer init too fast");
-		PCON |= 0x02; //sleep
+	if (timer->timerReload <= 0)	{ // 如果用户设置值不合适， 则不启动定时器
+		return;	//dont start timer, user may set TH and TL manually
 	}
 	else if ((timer->timerReload/12) < 65536UL){	// 如果用户设置值不合适， 则不启动定时器
 
