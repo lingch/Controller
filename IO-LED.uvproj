@@ -32,10 +32,10 @@
           <SFDFile></SFDFile>
           <bCustSvd>0</bCustSvd>
           <UseEnv>0</UseEnv>
-          <BinPath></BinPath>
+          <BinPath>d:\Keil_v5\C51\BIN\</BinPath>
           <IncludePath></IncludePath>
           <LibPath></LibPath>
-          <RegisterFilePath>STC\</RegisterFilePath>
+          <RegisterFilePath></RegisterFilePath>
           <DBRegisterFilePath>STC\</DBRegisterFilePath>
           <TargetStatus>
             <Error>0</Error>
@@ -423,6 +423,14 @@
               <FileType>1</FileType>
               <FilePath>.\mem.c</FilePath>
             </File>
+          </Files>
+        </Group>
+        <Group>
+          <GroupName>header</GroupName>
+        </Group>
+        <Group>
+          <GroupName>HAL</GroupName>
+          <Files>
             <File>
               <FileName>timer1.c</FileName>
               <FileType>1</FileType>
@@ -433,75 +441,10 @@
               <FileType>1</FileType>
               <FilePath>.\timer2.c</FilePath>
             </File>
-          </Files>
-        </Group>
-        <Group>
-          <GroupName>header</GroupName>
-          <Files>
             <File>
-              <FileName>timer2.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\timer2.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer1.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\timer1.h</FilePath>
-            </File>
-            <File>
-              <FileName>mem.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\mem.h</FilePath>
-            </File>
-            <File>
-              <FileName>config.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\config.h</FilePath>
-            </File>
-            <File>
-              <FileName>delay.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\delay.h</FilePath>
-            </File>
-            <File>
-              <FileName>STC15Fxxxx.H</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\STC15Fxxxx.H</FilePath>
-            </File>
-            <File>
-              <FileName>uart.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\uart.h</FilePath>
-            </File>
-            <File>
-              <FileName>list.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\list.h</FilePath>
-            </File>
-            <File>
-              <FileName>debug.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\debug.h</FilePath>
-            </File>
-            <File>
-              <FileName>pca.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\pca.h</FilePath>
-            </File>
-            <File>
-              <FileName>key.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\key.h</FilePath>
-            </File>
-            <File>
-              <FileName>MgrState.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\MgrState.h</FilePath>
-            </File>
-            <File>
-              <FileName>timer.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\timer.h</FilePath>
+              <FileName>timer3.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer3.c</FilePath>
             </File>
           </Files>
         </Group>

@@ -5,6 +5,7 @@
 #include "timer.h"
 #include "timer1.h"
 #include "timer2.h"
+#include "timer3.h"
 #include "STC15Fxxxx.h"
 
 #include "mgrstate.h"
@@ -18,7 +19,7 @@ void keyInit(){
 	IT0 = 0;	//both rising edge and down edge trigger
 	EX0 = 1;
 
-	keyTimer = &timer1;
+	keyTimer = &timer3;
 }
 
 

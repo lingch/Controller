@@ -9,6 +9,7 @@
 #include "mem.h"
 #include "timer1.h"
 #include "timer2.h"
+#include "timer3.h"
 #include <stdio.h>
 
 #define DIS_DOT		0x20
@@ -44,8 +45,8 @@ void main(void)
 	uartInit(&timer2);
 	debugInit();
 	//pcaInit();
-	t1Init(100 /*100ms*/);
-	//t3Init(11111 /*90us*/);
+	//t1Init(100 /*100ms*/);
+	t3Init(1111 /*90us*/);
 	keyInit();
 	mgrStateInit();
 	mainInit();
