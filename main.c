@@ -45,8 +45,8 @@ void main(void)
 	uartInit(&timer2);
 	debugInit();
 	//pcaInit();
-	t1Init(1000 /*10ms*/,100);
-	//t3Init(1111 /*90us*/);
+	t1Init(10000 ,100); // 10ms step timer
+	t3Init(11111, 100);	// 90us step timer, for 2262 encoder use
 	keyInit();
 	mgrStateInit();
 	mainInit();
