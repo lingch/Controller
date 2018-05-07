@@ -1,7 +1,9 @@
 #include "config.h"
 #include "debug.h"
+#include "timer2.h"
+#include "STC15FXXXX.h"
 
-#define OUTLET	p1^0;
+sbit OUTLET=P1^0;
 
 u8 BIT0 = 0x88;
 u8 BIT1 = 0xee;
@@ -18,6 +20,33 @@ Timer *encTimer;
 void encoderInit(Timer *timer){
 	encTimer = timer;
 }
+
+static void _end(){
+	delTimerTask(encTimer,taskSend);
+	taskSend = NULL;
+}
+
+void _send(){
+	if((BIT2262[nByte]) & (0x80 >> nBit)){
+		OUTLET = 1;
+	}else{
+		OUTLET = 0;
+	}
+	
+	--nBit;
+	if(nBit < 0){
+		nBit = 7;
+		--nByte;
+		if(nByte < 0){
+			_end();
+		}
+	}
+}
+
+static void _start(){
+	taskSend = addTimerTask(encTimer, _send, 0 ,1);
+}
+
 
 void sendBit0(){
 	BIT2262[0] = BIT0;
@@ -54,29 +83,6 @@ void sendBitSync(){
 	_start();
 }
 
-static void _start(){
-	taskSend = addTimerTask(encTimer, _send, 0 ,1);
-}
 
-void _send(){
-	if((BIT2262[nByte]) & (0x80 >> nBit)){
-		OUTLET = 1;
-	}else{
-		OUTLET = 0;
-	}
-	
-	--nBit;
-	if(nBit < 0){
-		nBit = 7;
-		--nByte;
-		if(nByte < 0){
-			endSend();
-		}
-	}
-}
 
-static void _end(){
-	delTimerTask(encTimer,taskSend);
-	taskSend = NULL;
-}
 

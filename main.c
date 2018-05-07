@@ -29,7 +29,7 @@ void mainInit(){
 	
 	EA = 1;		//允许总中断
 	
-	P0M1 = 0;	P0M0 = 1;	//设置推挽模式
+	P0M1 = 0;	P0M0 = 0;	//设置为准双向口
 	P1M1 = 0;	P1M1 = 0;	//设置为准双向口
 	P5M1 = 0;	P5M0 = 0;	//设置为准双向口
 	P0=0xff;
@@ -38,6 +38,21 @@ void mainInit(){
 	debugStr("main process initialization OK");
 }
 
+TimerTask* taskTest = NULL;
+
+u8 i=0x01;
+void shiftP55(){
+	P55 = ~P55;
+	
+	i = i <<1;
+	if(i> 0x08)
+		i=0x01;
+	P0 = i & 0x0f;
+	
+	P0 &= ~0x10;
+	delay_ms(5);
+	P0 |= 0x10;
+}
 void main(void)
 {
 	memInit();
@@ -46,12 +61,14 @@ void main(void)
 	debugInit();
 	//pcaInit();
 	t1Init(10000 ,100); // 10ms step timer
-	t3Init(11111, 100);	// 90us step timer, for 2262 encoder use
+	//t3Init(90, 100);	// 90us step timer, for 2262 encoder use
 	keyInit();
 	mgrStateInit();
 	mainInit();
 
 	debugStr("all initialization done, main process started");
+
+taskTest = addTimerTask(&timer1, shiftP55, 1,0);
 
 working=1;
 	while(1){

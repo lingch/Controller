@@ -423,6 +423,11 @@
               <FileType>1</FileType>
               <FilePath>.\mem.c</FilePath>
             </File>
+            <File>
+              <FileName>encoder.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\encoder.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
