@@ -11,6 +11,7 @@
 #include "timer2.h"
 #include "timer3.h"
 #include <stdio.h>
+#include "encoder.h"
 
 #define DIS_DOT		0x20
 #define DIS_BLACK	0x10
@@ -61,7 +62,7 @@ void main(void)
 	debugInit();
 	//pcaInit();
 	t1Init(10000 ,100); // 10ms step timer
-	//t3Init(90, 100);	// 90us step timer, for 2262 encoder use
+	t3Init(90, 100);	// 90us step timer, for 2262 encoder use
 	keyInit();
 	mgrStateInit();
 	mainInit();
@@ -69,7 +70,8 @@ void main(void)
 	debugStr("all initialization done, main process started");
 
 taskTest = addTimerTask(&timer1, shiftP55, 1,0);
-
+send2262(0x01,0x02);
+	
 working=1;
 	while(1){
 		if(!working){

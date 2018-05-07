@@ -3,7 +3,7 @@
 #include "timer2.h"
 #include "STC15FXXXX.h"
 
-sbit OUTLET=P1^0;
+sbit OUTLET=P0^5;
 
 u8 BIT0 = 0x88;
 u8 BIT1 = 0xee;
@@ -84,5 +84,25 @@ void sendBitSync(){
 }
 
 
+void send2262(u8 p1, u8 p2){
+	int i;
+
+	for(i=0; i < 4; ++i){
+		sendBitSync();
+		sendBitF();
+		sendBitF();
+		sendBitF();
+		sendBitF();
+		sendBitF();
+		sendBitF();
+		sendBitF();
+		sendBitF();
+
+		sendBit1();
+		sendBit0();
+		sendBit1();
+		sendBit1();
+	}
+}
 
 
