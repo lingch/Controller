@@ -6,12 +6,10 @@
 #include "timer.h"
 #include "timerTask.h"
 #include "debug.h"
-
+// #include "timer3.h"
 /*-------The timer structure--------*/
 
 void tInit(Timer *timer, u32 fsys, u16 us, u16 overflow){
-
-	timerTaskInit();
 
 	timer->tNow.msec = 0;
 	timer->tNow.sec = 0;
@@ -20,7 +18,7 @@ void tInit(Timer *timer, u32 fsys, u16 us, u16 overflow){
 	timer->overflow = overflow;
 	timer->timerReload = fsys / 1000000 * us;
 
-	debug("tInit timerReload=%lu, overflow=%u \r\n",timer->timerReload,timer->overflow);
+	debug("timer %bu init: timerReload=%lu, overflow=%u \r\n",timer->id, timer->timerReload,timer->overflow);
 }
 
 void timerInit(Timer *timer)
@@ -33,6 +31,7 @@ void timerInit(Timer *timer)
 		timer->cStop();
 
 		if (timer->timerReload < 65536UL){
+			
 			debug("timer 1T mode ");
 			timer->cSet12T(0);
 			timer->cSetTH((u8)((65536UL - timer->timerReload) / 256));

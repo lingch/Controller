@@ -1,108 +1,54 @@
-#include "config.h"
+#include "encoder.h"
 #include "debug.h"
-#include "timer2.h"
-#include "STC15FXXXX.h"
 
-sbit OUTLET=P0^5;
-
-u8 BIT0 = 0x88;
-u8 BIT1 = 0xee;
-u8 BITF = 0x8e;
-u8 BITSYNC[4] = {0x00,0x00,0x00,0x80};
-u8 BIT2262[4];
-
-u8 nByte;
-char nBit;
-
-TimerTask* taskSend = NULL;
-Timer *encTimer;
-
-void encoderInit(Timer *timer){
-	encTimer = timer;
-}
-
-static void _end(){
-	delTimerTask(encTimer,taskSend);
-	taskSend = NULL;
-}
-
-void _send(){
-	if((BIT2262[nByte]) & (0x80 >> nBit)){
-		OUTLET = 1;
-	}else{
-		OUTLET = 0;
-	}
+//function array to load different bit into positon
+//map by EBitType
+PLoadFunc bitTypeFunc[BIT_TYPE_COUNT] = {
+	//!ORDER IS RELATED TO EBitType DEFINITION, DONT CHANGE!
+	loadBitSync,
+	loadBitF,
+	loadBit0,
+	loadBit1
+};
+void loadFirstBit(){
+	PLoadFunc pLoadFun;
+	idxBitSending = 0;
 	
-	--nBit;
-	if(nBit < 0){
-		nBit = 7;
-		--nByte;
-		if(nByte < 0){
-			_end();
-		}
+	pLoadFun = bitTypeFunc[bitTypeSeq[0]];
+	pLoadFun();	//load bit
+}
+
+//load 2262 word in position
+//EBitType in addr and data
+//will load addr & data into bitTypeSeq
+//will map to bitTypeFunc when sending
+u8 loadWord(u8 *pAddr, u8 *pData){
+	u8 i;
+	u8 *pBit;
+
+	if(nRepeatCount > 0){
+		debugStr("2262 is busy sending");
+		return 0;
 	}
-}
 
-static void _start(){
-	taskSend = addTimerTask(encTimer, _send, 0 ,1);
-}
+	pBit = bitTypeSeq;
 
-
-void sendBit0(){
-	BIT2262[0] = BIT0;
-	nByte = 0;
-	nBit = 7;
-
-	_start();
-}
-
-void sendBit1(){
-	BIT2262[0] = BIT1;
-	nByte = 0;
-	nBit = 7;
-
-	_start();
-}
-
-void sendBitF(){
-	BIT2262[0] = BITF;
-	nByte = 0;
-	nBit = 7;
-
-	_start();
-}
-
-void sendBitSync(){
-	BIT2262[0] = BITSYNC[0];
-	BIT2262[1] = BITSYNC[1];
-	BIT2262[2] = BITSYNC[2];
-	BIT2262[3] = BITSYNC[3];
-	nByte = 3;
-	nBit = 7;
-
-	_start();
-}
-
-
-void send2262(u8 p1, u8 p2){
-	int i;
-
-	for(i=0; i < 4; ++i){
-		sendBitSync();
-		sendBitF();
-		sendBitF();
-		sendBitF();
-		sendBitF();
-		sendBitF();
-		sendBitF();
-		sendBitF();
-		sendBitF();
-
-		sendBit1();
-		sendBit0();
-		sendBit1();
-		sendBit1();
+	//load synchronize bit
+	*pBit = BitSync;pBit++;
+	//load address
+	for(i=0; i < ADDR_LEN_2262; ++i){
+		*pBit = pAddr[i]; pBit++;
 	}
+	//load data
+	for(i=0; i < DATA_LEN_2262; ++i){
+		*pBit = pData[i]; pBit++;
+	}
+
+	loadFirstBit();
+
+	nRepeatCount = 4;	//send 4 times according to 2262 protocal
+	//everything is in position...
+	return 1;
 }
 
 

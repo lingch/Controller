@@ -45,6 +45,7 @@ void t1Init(u16 us, u16 overflow)
 	timer1.cSetTL = t1SetTL;
 	timer1.cEnableInt = t1EnableInt;
 
+	timer1.id = 1;
 	tInit(&timer1, MAIN_Fosc, us, overflow);
 	timerInit(&timer1);
 }

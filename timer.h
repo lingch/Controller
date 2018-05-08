@@ -12,6 +12,7 @@ typedef void (*PTRunControl)(void);
 typedef void (*PTSet)(u8 param);
 
 typedef struct {
+	u8 id;
 	TimerResolution tNow;
 	Node *pTaskHead;
 	 u8 nextTimerTaskID;

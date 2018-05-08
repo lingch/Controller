@@ -40,4 +40,6 @@ Node* deleteNode(Node *head, void *pData){
 		}
 		p=p->next;
 	}
+	
+	return head;
 }

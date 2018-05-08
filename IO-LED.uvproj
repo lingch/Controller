@@ -379,11 +379,6 @@
               <FilePath>uart.c</FilePath>
             </File>
             <File>
-              <FileName>timer.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\timer.c</FilePath>
-            </File>
-            <File>
               <FileName>timeResolv.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\timeResolv.c</FilePath>
@@ -436,6 +431,11 @@
         <Group>
           <GroupName>HAL</GroupName>
           <Files>
+            <File>
+              <FileName>timer.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\timer.c</FilePath>
+            </File>
             <File>
               <FileName>timer1.c</FileName>
               <FileType>1</FileType>

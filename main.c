@@ -57,7 +57,8 @@ void shiftP55(){
 void main(void)
 {
 	memInit();
-	t2Init(0,1000); // uart will reconfigure the timer reload
+	timerTaskInit();
+	t2Init(0,1000); // uart will reconfigure the timer step
 	uartInit(&timer2);
 	debugInit();
 	//pcaInit();
@@ -70,7 +71,7 @@ void main(void)
 	debugStr("all initialization done, main process started");
 
 taskTest = addTimerTask(&timer1, shiftP55, 1,0);
-send2262(0x01,0x02);
+//send2262(0x01,0x02);
 	
 working=1;
 	while(1){

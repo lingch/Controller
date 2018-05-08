@@ -44,6 +44,7 @@ void t2Init( u16 us,u16 overflow)
 	timer2.cSetTL = t2SetTL;
 	timer2.cEnableInt = t2EnableInt;
 	
+	timer2.id = 2;
 	tInit(&timer2, MAIN_Fosc , us, overflow);
 	timerInit(&timer2);
 }
