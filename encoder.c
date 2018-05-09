@@ -5,7 +5,8 @@
 #define ADDR_LEN_2262	8
 #define DATA_LEN_2262	4
 #define SYNC_LEN_2262	4
-#define WORD_LEN_2262	(SYNC_LEN_2262+ADDR_LEN_2262+DATA_LEN_2262)
+#define WORD_LEN_2262	(SYNC_LEN_2262*8+ADDR_LEN_2262*8+DATA_LEN_2262*8)
+
 #define REPEAT_COUNT_2262	4
 
 u8 DATA_STOCK_2262[WORD_LEN_2262];
@@ -37,9 +38,12 @@ void send2262(){
 }
 
 //load wave form
-u8* loadWord(u8 *pBit, u8 *pAddr, u8 *pData){
+u8* loadWord(u8 *pAddr, u8 *pData){
 	u8 i;
+	u8 *pBit;
 
+	pBit = DATA_STOCK_2262;
+	
 	//load synchronize bit
 	pBit = loadBitSync(pBit);
 	//load address

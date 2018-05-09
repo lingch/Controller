@@ -4,6 +4,13 @@
 #include "STC15FXXXX.h"
 #include "config.h"
 
+//wave pattern definition
+#define BIT0 0x88
+#define BIT1 0xee
+#define BITF 0x8e
+
+extern u8 BITD[3];
+
 u8* loadBit(u8 *pBit, u8 bitPattern);
 
 //convenience function to loadBit

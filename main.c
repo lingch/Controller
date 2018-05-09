@@ -24,7 +24,6 @@
 /********************** 主函数 ************************/
 u8 working;
 
-
 void mainInit(){
 	working = 0;
 	
@@ -42,6 +41,9 @@ void mainInit(){
 TimerTask* taskTest = NULL;
 
 u8 i=0x01;
+u8 addr2262[8] = {BITF,BITF,BITF,BITF,BITF,BITF,BITF,BITF}; 
+u8 data2262[4]; 
+
 void shiftP55(){
 	P55 = ~P55;
 	
@@ -53,6 +55,13 @@ void shiftP55(){
 	P0 &= ~0x10;
 	delay_ms(5);
 	P0 |= 0x10;
+
+	//////////////
+ 	data2262[0] = BITD[i & 0x02];
+	data2262[0] = BITD[(i & 0x02) >> 1];
+	data2262[0] = BITD[(i & 0x04) >> 2];
+	data2262[0] = BITD[(i & 0x08) >> 3];
+	loadWord(addr2262,data2262);
 }
 void main(void)
 {

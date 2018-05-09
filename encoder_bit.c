@@ -1,11 +1,6 @@
 #include "debug.h"
 #include "encoder_bit.h"
 
-//wave pattern definition
-#define BIT0 = 0x88;
-#define BIT1 = 0xee;
-#define BITF = 0x8e;
-
 u8 BITD[3] = {BIT0,BIT1,BITF};
 u8 BITSYNC[4] = {0x80,0x00,0x00,0x00};	
 
