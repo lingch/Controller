@@ -63,6 +63,7 @@ void main(void)
 	debugInit();
 	//pcaInit();
 	t1Init(10000 ,100); // 10ms step timer
+	initEncoder();
 	t3Init(90, 100);	// 90us step timer, for 2262 encoder use
 	keyInit();
 	mgrStateInit();

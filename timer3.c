@@ -52,31 +52,6 @@ void t3Init(u16 us, u16 overflow)
 
 void t3Interrupt (void) interrupt TIMER3_VECTOR
 {
-	if(nRepeatCount == 0)
-		return;	//nothing to send
-
-	if(!send()){
-		//bit sent
-		idxBitSending++;	//index move to next bit
-		if(idxBitSending < WORD_LEN_2262){	//valid position after move
-			bitTypeFunc[bitTypeSeq[idxBitSending]]();//load the bit
-			//will call _send at next timer period interrupt
-		}else{
-			//all bits sent
-			//leaving idxBitSending == WORD_LEN_2262 to indicate
-			//word sending finished
-			if(nRepeatCount > 0){
-				nRepeatCount--;
-				loadFirstBit();
-			}else{
-				//leaving nRepeatCount==0 to indicate all sending turn
-				//finished
-				_nop_();
-			}		
-		}
-	}else{
-		//still sending one single bit
-		NOP1();
-	}
+	send2262();
 }
 

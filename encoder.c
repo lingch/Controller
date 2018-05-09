@@ -1,54 +1,59 @@
 #include "encoder.h"
 #include "debug.h"
 
-//function array to load different bit into positon
-//map by EBitType
-PLoadFunc bitTypeFunc[BIT_TYPE_COUNT] = {
-	//!ORDER IS RELATED TO EBitType DEFINITION, DONT CHANGE!
-	loadBitSync,
-	loadBitF,
-	loadBit0,
-	loadBit1
-};
-void loadFirstBit(){
-	PLoadFunc pLoadFun;
-	idxBitSending = 0;
-	
-	pLoadFun = bitTypeFunc[bitTypeSeq[0]];
-	pLoadFun();	//load bit
+//totally 13 bit to form a 2262 word
+#define ADDR_LEN_2262	8
+#define DATA_LEN_2262	4
+#define SYNC_LEN_2262	4
+#define WORD_LEN_2262	(SYNC_LEN_2262+ADDR_LEN_2262+DATA_LEN_2262)
+#define REPEAT_COUNT_2262	4
+
+u8 DATA_STOCK_2262[WORD_LEN_2262];
+
+//port definition
+sbit OUTLET=P0^5;
+
+u8 nRepeat;
+u8 *pSend;
+
+void initEncoder(){
+	nRepeat = 0;
+	pSend = DATA_STOCK_2262 + WORD_LEN_2262;
 }
 
-//load 2262 word in position
-//EBitType in addr and data
-//will load addr & data into bitTypeSeq
-//will map to bitTypeFunc when sending
-u8 loadWord(u8 *pAddr, u8 *pData){
-	u8 i;
-	u8 *pBit;
-
-	if(nRepeatCount > 0){
-		debugStr("2262 is busy sending");
-		return 0;
+//send wave form
+void send2262(){
+	if(nRepeat > 0){
+		return;
 	}
 
-	pBit = bitTypeSeq;
+	OUTLET = *pSend;
+	++pSend;
+	if(pSend >= WORD_LEN_2262){
+		//for next turn
+		nRepeat--;
+		pSend = DATA_STOCK_2262;
+	}
+}
+
+//load wave form
+u8* loadWord(u8 *pBit, u8 *pAddr, u8 *pData){
+	u8 i;
 
 	//load synchronize bit
-	*pBit = BitSync;pBit++;
+	pBit = loadBitSync(pBit);
 	//load address
 	for(i=0; i < ADDR_LEN_2262; ++i){
-		*pBit = pAddr[i]; pBit++;
+		pBit = loadBit(pBit,pAddr[i]);
 	}
 	//load data
 	for(i=0; i < DATA_LEN_2262; ++i){
-		*pBit = pData[i]; pBit++;
+		pBit = loadBit(pBit,pData[i]);
 	}
 
-	loadFirstBit();
+	//reset pointer
+	nRepeat = 4;
+	pSend = DATA_STOCK_2262;
 
-	nRepeatCount = 4;	//send 4 times according to 2262 protocal
-	//everything is in position...
-	return 1;
+	return pBit;
 }
-
-
