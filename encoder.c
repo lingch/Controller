@@ -15,25 +15,37 @@ u8 DATA_STOCK_2262[WORD_LEN_2262];
 sbit OUTLET=P0^5;
 
 u8 nRepeat;
-u8 *pSend;
+u8 iSend;
+
+
+void dumpStock(){
+	u8 i;
+
+	for(i=0;i<WORD_LEN_2262;++i){
+		debug("%bx ",DATA_STOCK_2262[i] );
+	}
+}
 
 void initEncoder(){
+	OUTLET = 0;
 	nRepeat = 0;
-	pSend = DATA_STOCK_2262 + WORD_LEN_2262;
+	iSend = WORD_LEN_2262;
 }
 
 //send wave form
 void send2262(){
-	if(nRepeat > 0){
+	if(nRepeat <= 0){
+		OUTLET = 0;
 		return;
 	}
-
-	OUTLET = *pSend;
-	++pSend;
-	if(pSend >= WORD_LEN_2262){
+	
+	//OUTLET = ~OUTLET;
+	OUTLET = DATA_STOCK_2262[iSend];
+	++iSend;
+	if(iSend >= WORD_LEN_2262){
 		//for next turn
 		nRepeat--;
-		pSend = DATA_STOCK_2262;
+		iSend = 0;
 	}
 }
 
@@ -56,8 +68,10 @@ u8* loadWord(u8 *pAddr, u8 *pData){
 	}
 
 	//reset pointer
-	nRepeat = 4;
-	pSend = DATA_STOCK_2262;
+	iSend = 0;
+	nRepeat = REPEAT_COUNT_2262;
 
+	dumpStock();
 	return pBit;
 }
+

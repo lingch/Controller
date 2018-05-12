@@ -423,6 +423,11 @@
               <FileType>1</FileType>
               <FilePath>.\encoder.c</FilePath>
             </File>
+            <File>
+              <FileName>encoder_bit.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\encoder_bit.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

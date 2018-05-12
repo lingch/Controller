@@ -42,7 +42,7 @@ TimerTask* taskTest = NULL;
 
 u8 i=0x01;
 u8 addr2262[8] = {BITF,BITF,BITF,BITF,BITF,BITF,BITF,BITF}; 
-u8 data2262[4]; 
+u8 data2262[4] = {BIT0,BIT0,BIT0,BIT1}; 
 
 void shiftP55(){
 	P55 = ~P55;
@@ -57,10 +57,10 @@ void shiftP55(){
 	P0 |= 0x10;
 
 	//////////////
- 	data2262[0] = BITD[i & 0x02];
-	data2262[0] = BITD[(i & 0x02) >> 1];
-	data2262[0] = BITD[(i & 0x04) >> 2];
-	data2262[0] = BITD[(i & 0x08) >> 3];
+ 	data2262[0] = BITD[i & 0x01];
+	data2262[1] = BITD[(i & 0x02) >> 1];
+	data2262[2] = BITD[(i & 0x04) >> 2];
+	data2262[3] = BITD[(i & 0x08) >> 3];
 	loadWord(addr2262,data2262);
 }
 void main(void)
@@ -73,14 +73,14 @@ void main(void)
 	//pcaInit();
 	t1Init(10000 ,100); // 10ms step timer
 	initEncoder();
-	t3Init(90, 100);	// 90us step timer, for 2262 encoder use
+	t3Init(150, 100);	// 90us step timer, for 2262 encoder use
 	keyInit();
 	mgrStateInit();
 	mainInit();
 
 	debugStr("all initialization done, main process started");
 
-taskTest = addTimerTask(&timer1, shiftP55, 1,0);
+taskTest = addTimerTask(&timer1, shiftP55, 2,0);
 //send2262(0x01,0x02);
 	
 working=1;

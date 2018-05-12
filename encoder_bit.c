@@ -8,7 +8,7 @@ u8* loadBit(u8 *pBit, u8 bitPattern){
 	int i;
 
 	for(i=0;i<8;++i){
-		*pBit = (bitPattern & (0x01 << i)) >> i;
+		*pBit = (bitPattern & (0x01 << (7-i))) >> (7-i);
 		pBit++;
 	}
 
